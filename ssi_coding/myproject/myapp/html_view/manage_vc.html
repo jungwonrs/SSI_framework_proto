@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CMSC and VCCSC Information</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #e5e5e5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* Wrap containers for responsiveness */
+        }
+
+        .container {
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            width: 48%;
+            margin: 20px 1%; /* Add a little margin on the left and right */
+            padding: 25px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin: 0 0 15px;
+        }
+
+        .input-container {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        input, textarea {
+            resize: vertical;
+            box-sizing: border-box; /* Add this line if it's not already present */
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical; /* User can resize vertically */
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .action-button {
+            padding: 10px 30px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase; /* Button text style */
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+
+        .info-container {
+            padding: 15px;
+            background-color: #ecf0f1;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+            color: #34495e;
+            margin-top: 10px;
+            transition: border-color 0.3s ease;
+        }
+
+        .info-message {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Grid styles */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Ensure a min-width for the columns */
+            gap: 15px; /* This adds space between the grid items */
+            padding: 10px; /* Optional: to add some space inside the grid container */
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+            padding-left: 5px; /* Align the text a bit to the left */
+        }
+
+        input[type="text"] {
+            width: 100%; /* Ensures the input doesn't exceed the parent width */
+            box-sizing: border-box; /* Include padding and border in the width */
+        }
+        @media (max-width: 768px) {
+            .grid-container {
+            grid-template-columns: 1fr 1fr; /* On smaller screens, use two columns */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% csrf_token %}
+
+        <h1>CMSC Information</h1>
+        <div class="input-container">
+            <label for="cmscAddress">CMSC Address:</label>
+            <input type="text" id="cmscAddress" name="cmscAddress">
+        </div>
+        <div class="input-container">
+            <label for="key_owner_cmsc">Key Owner:</label>
+            <input type="text" id="key_owner_cmsc" name="key_owner_cmsc">
+        </div>
+        <div class="input-container">
+            <label for="private_key">Private key:</label>
+            <input type="text" id="private_key" name="private_key">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="getCmscInfo()">Get CMSC Info</button>
+        </div>
+        <div class="info-container">
+            <p class="info-message" id="cmscInfoMessage"></p>
+        </div>
+
+        <br>
+        <h2> Change 3f</h2>
+        <div class="input-container">
+            <label for="cmscAddress2">1. CMSC Address:</label>
+            <input type="text" id="cmscAddress2" name="cmscAddress2">
+        </div>
+        <div class="input-container">
+            <label for="private_key2">2. Private key:</label>
+            <input type="text" id="private_key2" name="private_key2">
+        </div>
+        <div class="input-container">
+            <label for="key_owner_cmsc2">3. Key Owner:</label>
+            <input type="text" id="key_owner_cmsc2" name="key_owner_cmsc2">
+        </div>
+
+        <!-- HRoot -->
+        <div class="input-container">
+            <label for="HRoot">4. HRoot (Hexadecimal):</label>
+            <input type="text" id="HRoot" name="HRoot">
+        </div>
+
+        <!-- Nkey -->
+        <div class="input-container">
+            <label>5. Nkey:</label>
+            <div class="grid-container">
+                <!-- 16 Nkey input field -->
+                <div class="grid-item">
+                    <div class="input-number">5.1</div>
+                    <input type="text" id="nkey-input-1" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.2</div>
+                    <input type="text" id="nkey-input-2" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.3</div>
+                    <input type="text" id="nkey-input-3" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.4</div>
+                    <input type="text" id="nkey-input-4" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.5</div>
+                    <input type="text" id="nkey-input-5" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.6</div>
+                    <input type="text" id="nkey-input-6" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.7</div>
+                    <input type="text" id="nkey-input-7" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.8</div>
+                    <input type="text" id="nkey-input-8" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.9</div>
+                    <input type="text" id="nkey-input-9" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.10</div>
+                    <input type="text" id="nkey-input-10" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.11</div>
+                    <input type="text" id="nkey-input-11" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.12</div>
+                    <input type="text" id="nkey-input-12" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.13</div>
+                    <input type="text" id="nkey-input-13" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.14</div>
+                    <input type="text" id="nkey-input-14" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.15</div>
+                    <input type="text" id="nkey-input-15" name="Nkey" class="nkey-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">5.16</div>
+                    <input type="text" id="nkey-input-16" name="Nkey" class="nkey-input">
+                </div>
+            </div>
+        </div>
+
+        <!-- Salt -->
+        <div class="input-container">
+            <label>6. Salt:</label>
+            <div class="grid-container">
+                <!-- 16 Salt input field-->
+                <div class="grid-item">
+                    <div class="input-number">6.1</div>
+                    <input type="text" id="salt-input-1" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.2</div>
+                    <input type="text" id="salt-input-2" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.3</div>
+                    <input type="text" id="salt-input-3" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.4</div>
+                    <input type="text" id="salt-input-4" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.5</div>
+                    <input type="text" id="salt-input-5" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.6</div>
+                    <input type="text" id="salt-input-6" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.7</div>
+                    <input type="text" id="salt-input-7" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.8</div>
+                    <input type="text" id="salt-input-8" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.9</div>
+                    <input type="text" id="salt-input-9" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.10</div>
+                    <input type="text" id="salt-input-10" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.11</div>
+                    <input type="text" id="salt-input-11" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.12</div>
+                    <input type="text" id="salt-input-12" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.13</div>
+                    <input type="text" id="salt-input-13" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.14</div>
+                    <input type="text" id="salt-input-14" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.15</div>
+                    <input type="text" id="salt-input-15" name="Salt" class="salt-input">
+                </div>
+                <div class="grid-item">
+                    <div class="input-number">6.16</div>
+                    <input type="text" id="salt-input-16" name="Salt" class="salt-input">
+                </div>
+            </div>
+        </div>
+
+        <!-- Modify CMSC Info Button -->
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="modifyCmscInfo()">Modify CMSC Info</button>
+        </div>
+        <br><br>
+
+        <h2> Change Access CMSC</h2>
+        <div class = "input-container">
+            <label for ="cmscAddress3"> CMSC Address: </label>
+            <input type="text" id="cmscAddress3" name="cmscAddress3">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key3"> Private key: </label>
+            <input type="text" id="private_key3" name="private_key3">
+        </div>
+        <div class = "input-container">
+            <label for ="key_owner_cmsc3"> Key Owner: </label>
+            <input type="text" id="key_owner_cmsc3" name="key_owner_cmsc3">
+        </div>
+        <div class="input-container">
+            <label for="cmscAccess">New Access CMSC</label>
+            <input type="text" id="cmscAccess" name="cmscAccess">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="changeAccessCMSC()">Modify Access CMSC</button>
+        </div>
+
+        <br><br>
+        <h2> Set Accessor</h2>
+        <div class = "input-container">
+            <label for ="cmscAddress4"> CMSC Address: </label>
+            <input type="text" id="cmscAddress4" name="cmscAddress4">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key4"> Private key: </label>
+            <input type="text" id="private_key4" name="private_key4">
+        </div>
+        <div class = "input-container">
+            <label for ="key_owner_cmsc4"> Key Owner: </label>
+            <input type="text" id="key_owner_cmsc4" name="key_owner_cmsc4">
+        </div>
+        <div class="input-container">
+            <label for="cmscAccessor">New Accessor</label>
+            <input type="text" id="cmscAccessor" name="cmscAccessor">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="changeAccessor()">Modify Accessor CMSC</button>
+        </div>
+        <br><br>
+        <h2> Change Key Owner (CMSC)</h2>
+        <div class = "input-container">
+            <label for ="cmscAddress4-1"> CMSC Address: </label>
+            <input type="text" id="cmscAddress4-1" name="cmscAddress4-1">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key4"> Private key: </label>
+            <input type="text" id="private_key4-1" name="private_key4-1">
+        </div>
+        <div class = "input-container">
+            <label for ="key_owner_cmsc4-1"> Original Key Owner: </label>
+            <input type="text" id="key_owner_cmsc4-1" name="key_owner_cmsc4-1">
+        </div>
+        <div class="input-container">
+            <label for="new_key_owner">New Key Owner</label>
+            <input type="text" id="new_key_owner" name="new_key_owner">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="newKeyOwner()">Modify Key Owner</button>
+        </div>
+
+
+    </div>
+
+    <div class="container">
+        <h1>VC Information</h1>
+        <div class="input-container">
+            <label for="vccscAddress">VCCSC Address:</label>
+            <input type="text" id="vccscAddress" name="vccscAddress">
+        </div>
+        <div class="input-container">
+            <label for="vc_meta">VC Meta:</label>
+            <input type="text" id="vc_meta" name="vc_meta">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="getVCInfo()">Get VC Info</button>
+        </div>
+        <div class="info-container">
+            <p class="info-message" id="vccscInfoMessage"></p>
+        </div>
+
+        <br>
+        <h2>VC All</h2>
+        <div class="input-container">
+            <label for="vccscAddress2">VCCSC Address:</label>
+            <input type="text" id="vccscAddress2" name="vccscAddress2">
+        </div>
+        <div class="input-container">
+            <label for="key_owner_vccsc2">Key Owner:</label>
+            <input type="text" id="key_owner_vccsc2" name="key_owner_vccsc2">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key6"> Private key: </label>
+            <input type="text" id="private_key6" name="private_key6">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="getVCInfoAll()">Get VC Info All</button>
+        </div>
+        <div class="info-container">
+            <p class="info-message" id="vccscInfoAllMessage"></p>
+        </div>
+
+
+        <br>
+        <h2>Change Claim</h2>
+        <div class="input-container">
+            <label for="vccscAddress3">VCCSC Address:</label>
+            <input type="text" id="vccscAddress3" name="vccscAddress3">
+        </div>
+        <div class="input-container">
+            <label for="VCCSC_key_owner_vccsc">VCCSC Key Owner:</label>
+            <input type="text" id="VCCSC_key_owner_vccsc" name="VCCSC_key_owner_vccsc">
+        </div>
+        <div class="input-container">
+            <label for="cmscAddress3-1">CMSC Address:</label>
+            <input type="text" id="cmscAddress3-1" name="cmscAddress3-1">
+        </div>
+        <div class="input-container">
+            <label for="CMSC_key_owner_vccsc">CMSC Key Owner:</label>
+            <input type="text" id="CMSC_key_owner_vccsc" name="CMSC_key_owner_vccsc">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key7"> Private key: </label>
+            <input type="text" id="private_key7" name="private_key7">
+        </div>
+        <div class = "input-container">
+            <label for ="vc_meta3"> VC Meta: </label>
+            <input type="text" id="vc_meta3" name="vc_meta3">
+        </div>
+        <label for="vccscData">New Claim Info:</label>
+        <textarea id="vccscData" name="vccscData" rows="4"></textarea>
+
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="modifyClaimInfo()">Modify Claim Info</button>
+        </div>
+        <br>
+
+        <h2>VC Revocation List</h2>
+        <div class="input-container">
+            <label for="vccscAddress4">VCCSC Address:</label>
+            <input type="text" id="vccscAddress4" name="vccscAddress4">
+        </div>
+        <div class="input-container">
+            <label for="key_owner_vccsc4">Key Owner:</label>
+            <input type="text" id="key_owner_vccsc4" name="key_owner_vccsc4">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key8"> Private key: </label>
+            <input type="text" id="private_key8" name="private_key8">
+        </div>
+        <div class = "input-container">
+            <label for ="vc_meta5"> VC Meta: </label>
+            <input type="text" id="vc_meta5" name="vc_meta5">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="getVCRevocationList()">Get VC Revocation List</button>
+        </div>
+        <div class="info-container">
+            <p class="info-message" id="VCRevocationList"></p>
+        </div>
+
+        <br>
+        <h2>VC Revoke</h2>
+        <div class="input-container">
+            <label for="vccscAddress5">VCCSC Address:</label>
+            <input type="text" id="vccscAddress5" name="vccscAddress5">
+        </div>
+        <div class="input-container">
+            <label for="key_owner_vccsc5">Key Owner:</label>
+            <input type="text" id="key_owner_vccsc5" name="key_owner_vccsc5">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key9"> Private key: </label>
+            <input type="text" id="private_key9" name="private_key9">
+        </div>
+        <div class = "input-container">
+            <label for ="vc_meta2"> VC meta: </label>
+            <input type="text" id="vc_meta2" name="vc_meta2">
+        </div>
+
+        <div class = "input-container">
+            <label for ="cl"> Encrypted Claim: </label>
+            <input type="text" id="cl" name="cl">
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="VCRevoke()">VC Revoke</button>
+        </div>
+
+        <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.8); z-index: 9999; text-align: center;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                <p>Loading...</p>
+            </div>
+        </div>
+        <br>
+        <h2>Change Key Owner (VCCSC)</h2>
+        <div class="input-container">
+            <label for="vccscAddress10">VCCSC Address:</label>
+            <input type="text" id="vccscAddress10" name="vccscAddress10">
+        </div>
+        <div class="input-container">
+            <label for="Private10">Private Key:</label>
+            <input type="text" id="Private10" name="Private10">
+        </div>
+        <div class = "input-container">
+            <label for ="orignal_key_owner"> Original Key Owner: </label>
+            <input type="text" id="orignal_key_owner" name="orignal_key_owner">
+        </div>
+        <div class = "input-container">
+            <label for ="new_key_owner2"> New Key Owner: </label>
+            <input type="text" id="new_key_owner2" name="new_key_owner2">
+        </div>
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="setKeyOwner()">Modify Key Owner</button>
+        </div>
+        <br>
+        <h2>Add new CV</h2>
+        <div class="input-container">
+            <label for="vccscAddress11">VCCSC Address:</label>
+            <input type="text" id="vccscAddress11" name="vccscAddress11">
+        </div>
+        <div class="input-container">
+            <label for="VCCSC_key_owner_vccsc11">VCCSC Key Owner:</label>
+            <input type="text" id="VCCSC_key_owner_vccsc11" name="VCCSC_key_owner_vccsc11">
+        </div>
+        <div class="input-container">
+            <label for="cmscAddress11">CMSC Address:</label>
+            <input type="text" id="cmscAddress11" name="cmscAddress11">
+        </div>
+        <div class="input-container">
+            <label for="CMSC_key_owner_vccsc11">CMSC Key Owner:</label>
+            <input type="text" id="CMSC_key_owner_vccsc11" name="CMSC_key_owner_vccsc11">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key11"> Private key: </label>
+            <input type="text" id="private_key11" name="private_key11">
+        </div>
+        <label for="vccscData11">New Claim Info:</label>
+        <textarea id="vccscData11" name="vccscData11" rows="4"></textarea>
+
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="addNewVC()">Add new VC</button>
+        </div>
+        <br>
+         <h2>Add new Claim</h2>
+        <div class="input-container">
+            <label for="vccscAddress12">VCCSC Address:</label>
+            <input type="text" id="vccscAddress12" name="vccscAddress12">
+        </div>
+        <div class="input-container">
+            <label for="VCCSC_key_owner_vccsc12">VCCSC Key Owner:</label>
+            <input type="text" id="VCCSC_key_owner_vccsc12" name="VCCSC_key_owner_vccsc12">
+        </div>
+        <div class = "input-container">
+            <label for ="private_key12"> Private key: </label>
+            <input type="text" id="private_key12" name="private_key12">
+        </div>
+        <div class = "input-container">
+            <label for ="vc_meta12"> VC Meta: </label>
+            <input type="text" id="vc_meta12" name="vc_meta12">
+        </div>
+        <label for="vccscData12">New Claim Info:</label>
+        <textarea id="vccscData12" name="vccscData12" rows="4"></textarea>
+
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="addNewClaim()">Add new Claim</button>
+        </div>
+
+
+    </div>
+    <script>
+        function showLoading(){
+            var loadingOverlay = document.getElementById("loading-overlay");
+            loadingOverlay.style.display = 'block';
+        }
+
+        function hideLoading(){
+            var loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'none';
+        }
+
+        function getCmscInfo(){
+            var xhr = new XMLHttpRequest();
+
+            var csrftoken = getCookie('csrftoken');
+            var cmsc_address = document.getElementById("cmscAddress").value;
+            var key_owner = document.getElementById("key_owner_cmsc").value;
+            var private_key = document.getElementById("private_key").value;
+            var jsonData = {
+                 "cmscAddress": cmsc_address,
+                 "key_owner_cmsc": key_owner,
+                 "private_key": private_key
+             };
+
+            xhr.open('POST', '{% url "get_cmsc_info" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    hideLoading();
+                    var infoMessageElement = document.getElementById("cmscInfoMessage");
+
+                    if(xhr.status === 200){
+                        var response = JSON.parse(xhr.responseText);
+
+                        let nKeyArray = (typeof response.nKey === 'string') ? response.nKey.replace(/'/g, '"') : response.nKey;
+                        let saltArray = (typeof response.salt_info === 'string') ? response.salt_info.replace(/'/g, '"') : response.salt_info;
+
+                        nKeyArray = (typeof nKeyArray === 'string') ? JSON.parse(nKeyArray) : nKeyArray;
+                        saltArray = (typeof saltArray === 'string') ? JSON.parse(saltArray) : saltArray;
+
+                        infoMessageElement.innerHTML = "HRoot: " + response.hRoot + '<br>' +
+                            "nKey: " + nKeyArray.join(', ') + '<br>' +
+                            "salt: " + saltArray.join(', ');
+
+                    } else {
+                        alert("Error:" + xhr.responseText);
+                        infoMessageElement.textContent = "Error: " + xhr.responseText;
+                    }
+                }
+            };
+            showLoading()
+            xhr.send(JSON.stringify((jsonData)))
+
+        }
+
+        function modifyCmscInfo(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var cmsc_address = document.getElementById("cmscAddress2").value;
+            var private_key = document.getElementById('private_key2').value;
+            var key_owner = document.getElementById("key_owner_cmsc2").value;
+            var HRoot = document.getElementById("HRoot").value;
+
+            var Nkey = [];
+            var nkeyInputs = document.getElementsByClassName("nkey-input");
+            for (var i = 0; i < nkeyInputs.length; i++) {
+                Nkey.push(nkeyInputs[i].value);
+            }
+
+            var Salt = [];
+            var saltInputs = document.getElementsByClassName("salt-input");
+            for (var i = 0; i < saltInputs.length; i++) {
+                Salt.push(saltInputs[i].value);
+            }
+
+            var jsonData = {
+                "cmsc_ad": cmsc_address,
+                "private_key": private_key,
+                "key_owner": key_owner,
+                "HRoot": HRoot,
+                "Nkey": Nkey,
+                "Salt": Salt,
+            };
+
+            xhr.open('POST', '{% url "modify_cmsc_info" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+
+        }
+
+        function changeAccessCMSC(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var cmsc_address = document.getElementById("cmscAddress3").value;
+            var private_key = document.getElementById('private_key3').value;
+            var key_owner = document.getElementById("key_owner_cmsc3").value;
+            var new_access_cmsc = document.getElementById("cmscAccess").value;
+
+            var jsonData = {
+                "cmsc_ad": cmsc_address,
+                "private_key": private_key,
+                "key_owner": key_owner,
+                "new_access_cmsc": new_access_cmsc,
+
+            };
+
+            xhr.open('POST', '{% url "change_access_cmsc" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function changeAccessor(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var cmsc_address = document.getElementById("cmscAddress4").value;
+            var private_key = document.getElementById('private_key4').value;
+            var key_owner = document.getElementById("key_owner_cmsc4").value;
+            var new_accessor = document.getElementById("cmscAccessor").value;
+
+            var jsonData = {
+                "cmsc_ad": cmsc_address,
+                "private_key": private_key,
+                "key_owner": key_owner,
+                "cmscAccessor": new_accessor,
+            };
+
+            xhr.open('POST', '{% url "change_accessor" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+
+        }
+
+        function newKeyOwner(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var cmsc_address = document.getElementById("cmscAddress4-1").value;
+            var private_key = document.getElementById('private_key4-1').value;
+            var key_owner = document.getElementById("key_owner_cmsc4-1").value;
+            var new_key = document.getElementById("new_key_owner").value;
+
+            var jsonData = {
+                "cmsc_ad": cmsc_address,
+                "private_key": private_key,
+                "key_owner": key_owner,
+                "new_key_owner": new_key,
+            };
+
+            xhr.open('POST', '{% url "change_cmsc_key_owner" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function getVCInfo(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_address = document.getElementById("vccscAddress").value;
+            var vc_meta = document.getElementById("vc_meta").value;
+
+            var jsonData = {
+                "vccscAddress": vccsc_address,
+                "vc_meta": vc_meta,
+            };
+
+            xhr.open('POST', '{% url "get_vc_info" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    hideLoading();
+                    var infoMessageElement = document.getElementById("vccscInfoMessage");
+
+                    if(xhr.status === 200){
+                        var response = JSON.parse(xhr.responseText);
+
+                        var displayString = "Meta: " + response.meta + '<br>' + '<br>' +
+                                            "Claim: " + response.claim + '<br>' +
+                                            "Proof: " + response.pr;
+
+                        infoMessageElement.innerHTML = displayString;
+
+                    } else {
+                        alert("Error:" + xhr.responseText);
+                        infoMessageElement.textContent = "Error: " + xhr.responseText;
+                    }
+                }
+            };
+            showLoading()
+            xhr.send(JSON.stringify((jsonData)))
+
+        }
+
+        function getVCInfoAll(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_address = document.getElementById("vccscAddress2").value;
+            var key_owner = document.getElementById("key_owner_vccsc2").value;
+            var private_key = document.getElementById('private_key6').value;
+
+            var jsonData = {
+                "vccscAddress": vccsc_address,
+                "key_owner": key_owner,
+                "private_key": private_key
+            };
+
+            xhr.open('POST', '{% url "get_vc_info_all" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === 4){
+                    hideLoading();
+                    var infoMessageElement = document.getElementById("vccscInfoAllMessage");
+
+                    if(xhr.status === 200){
+                        var response = JSON.parse(xhr.responseText);
+
+                        if (response.message === 'okay') {
+                            var resultsArray = response.result;
+                            var displayString = '';
+
+                            resultsArray.forEach(function(tuple, index) {
+                                displayString += "<strong>Result " + (index + 1) + ":</strong><br>";
+                                displayString += "Meta: " + tuple[0] + "<br>" + "<br>";
+                                displayString += "Claim: " + tuple[1].join(', ') + "<br>";
+                                displayString += "Proof: " + tuple[2] + "<br><br>";
+                            });
+
+                            infoMessageElement.innerHTML = displayString;
+                        } else {
+                            infoMessageElement.textContent = "Error: No result found";
+                        }
+
+                    } else {
+                        var errorResponse = JSON.parse(xhr.responseText);
+                        alert("Error: " + errorResponse.message);
+                        infoMessageElement.textContent = "Error: " + errorResponse.message;
+                    }
+                }
+            };
+            showLoading()
+            xhr.send(JSON.stringify((jsonData)))
+
+        }
+
+        function modifyClaimInfo(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_ad = document.getElementById("vccscAddress3").value;
+            var vccsc_key = document.getElementById('VCCSC_key_owner_vccsc').value;
+            var cmsc_ad = document.getElementById("cmscAddress3-1").value;
+            var cmsc_key = document.getElementById("CMSC_key_owner_vccsc").value;
+            var private_key = document.getElementById("private_key7").value;
+            var vc_meta = document.getElementById("vc_meta3").value;
+            var vcc_data = document.getElementById("vccscData").value;
+
+            var jsonData = {
+                "vccsc_ad": vccsc_ad,
+                "vccsc_key": vccsc_key,
+                "cmsc_ad": cmsc_ad,
+                "cmsc_key": cmsc_key,
+                "private_key": private_key,
+                "vc_meta": vc_meta,
+                "vcc_data": vcc_data,
+            };
+
+            xhr.open('POST', '{% url "modify_claim_info" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function getVCRevocationList(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_address = document.getElementById("vccscAddress4").value;
+            var key_owner = document.getElementById("key_owner_vccsc4").value;
+            var private_key = document.getElementById('private_key8').value;
+            var vc_meta = document.getElementById('vc_meta5').value;
+
+            var jsonData = {
+                "vccscAddress": vccsc_address,
+                "key_owner": key_owner,
+                "private_key": private_key,
+                "vc_meta": vc_meta,
+            };
+
+            xhr.open('POST', '{% url "get_vc_revocation_list" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    var infoMessageElement = document.getElementById("VCRevocationList");
+
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+
+                        if (response.message === 'okay') {
+                            var resultsArray = response.result;
+                            var resultsString = resultsArray.join(', ');
+                            infoMessageElement.textContent = resultsString;
+                        } else if (response.message === 'empty') {
+                            infoMessageElement.textContent = "No Revocation List.";
+                        } else {
+                            infoMessageElement.textContent = "Error: " + response.message;
+                        }
+                    } else {
+                        var errorResponse = JSON.parse(xhr.responseText);
+                        alert("Error: " + errorResponse.message);
+                        infoMessageElement.textContent = "Error: " + errorResponse.message;
+                    }
+                }
+            };
+            showLoading()
+            xhr.send(JSON.stringify((jsonData)))
+
+        }
+
+        function VCRevoke(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_ad = document.getElementById("vccscAddress5").value;
+            var key_owner = document.getElementById('key_owner_vccsc5').value;
+            var private_key = document.getElementById("private_key9").value;
+            var vc_meta = document.getElementById("vc_meta2").value;
+            var cl = document.getElementById("cl").value;
+
+            var jsonData = {
+                "vccsc_ad": vccsc_ad,
+                "key_owner": key_owner,
+                "private_key": private_key,
+                "vc_meta": vc_meta,
+                "cl" : cl,
+            };
+
+            xhr.open('POST', '{% url "vc_revoke" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+    </script>
+</body>
+</html>

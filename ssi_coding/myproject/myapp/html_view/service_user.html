@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Service User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .action-button {
+            margin: 10px;
+            padding: 15px 50px; /* 버튼의 너비와 높이를 조정합니다. */
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 200px; /* 버튼의 가로 크기를 설정합니다. */
+        }
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Service User Dashboard</h1>
+        <p>Select an action:</p>
+        <div class="button-container">
+            <button class="action-button" onclick="generatePrivateKey()">Generate Private Key</button>
+            <button class="action-button" onclick="recoveryPrivateKey()">Recovery Private Key</button>
+            <button class="action-button" onclick="generateVC()">Generate VC</button>
+            <button class="action-button" onclick="manageVC()">Manage VC</button>
+        </div>
+    </div>
+
+    <script>
+        function generatePrivateKey() {
+            window.open("/select/user/sk", "_blank")
+        }
+
+        function recoveryPrivateKey(){
+            window.open("/select/user/sk/recovery", "_blank")
+        }
+
+        function generateVC() {
+            window.open("/select/user/genvc", "_blank")
+        }
+
+        function manageVC() {
+            window.open("/select/user/manvc", "_blank")
+        }
+    </script>
+</body>
+</html>

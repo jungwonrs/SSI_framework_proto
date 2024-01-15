@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Private Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #ffffff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #2980b9;
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            margin-top: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .action-button {
+            margin-top: 20px;
+            padding: 15px 50px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Please upload your pictures</h1>
+
+        <form id="uploadForm" method="POST" action="{% url 'img_proc' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <!-- image 1 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 1 </h5>
+                           <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload1" type="file" name="image1" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload1', 'file-upload-name1')"/>
+
+                            <span id="file-upload-name1">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 2 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 2 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload2" type="file" name="image2" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload2', 'file-upload-name2')"/>
+                            <span id="file-upload-name2">No file selected</span>
+
+                    </div>
+                </div>
+            </div>
+            <!-- image 3 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 3 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload3" type="file" name="image3" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload3', 'file-upload-name3')"/>
+                            <span id="file-upload-name3">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 4 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 4 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload4" type="file" name="image4" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload4', 'file-upload-name4')"/>
+                            <span id="file-upload-name4">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 5 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 5 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload5" type="file" name="image5" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload5', 'file-upload-name5')"/>
+                            <span id="file-upload-name5">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 6 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 6 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload6" type="file" name="image6" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload6', 'file-upload-name6')"/>
+                            <span id="file-upload-name6">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 7 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 7 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload7" type="file" name="image7" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload7', 'file-upload-name7')"/>
+                            <span id="file-upload-name7">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 8 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 8 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload8" type="file" name="image8" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload8', 'file-upload-name8')"/>
+                            <span id="file-upload-name8">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 9 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 9 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload9" type="file" name="image9" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload9', 'file-upload-name9')"/>
+                            <span id="file-upload-name9">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <!-- image 10 -->
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title custom-card-title"> picture 10 </h5>
+                            <label class="custom-file-upload">
+                            Select file
+                            </label>
+                            <input id="file-upload10" type="file" name="image10" class="hidden-input" accept="image/*" style="display: none;" onchange="displayFileName('file-upload10', 'file-upload-name10')">
+                            <span id="file-upload-name10">No file selected</span>
+                    </div>
+                </div>
+            </div>
+            <button type="button" id="generate-button" class="action-button" onclick="generatePrivateKey()">Generate Private Key</button>
+
+            <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.8); z-index: 9999; text-align: center;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <p>Loading...</p>
+                </div>
+            </div>
+
+            <div id="key-info-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <p><strong>Private Key:</strong> <span id="private-key-info"></span></p>
+                    <p><strong>Public Key:</strong> <span id="public-key-info"></span></p>
+                    <p><strong>Address:</strong> <span id="address-info"></span></p>
+                    <p><strong>KCSC Address:</strong><span id="kcsc-address-info"></span></p>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+<script>
+    function displayFileName(inputId, spanId) {
+        var input = document.getElementById(inputId);
+        var span = document.getElementById(spanId);
+        span.textContent = input.files.length > 0 ? input.files[0].name : 'No file selected';
+    }
+
+    function showLoading() {
+        var loadingOverlay = document.getElementById('loading-overlay');
+        loadingOverlay.style.display = 'block';
+    }
+
+    function hideLoading() {
+        var loadingOverlay = document.getElementById('loading-overlay');
+        loadingOverlay.style.display = 'none';
+    }
+
+    function generatePrivateKey() {
+        showLoading();
+
+        var formData = new FormData();
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        var filesSelected = 0;
+
+        for (var i = 1; i <= 10; i++) {
+            var fileInput = document.getElementById('file-upload' + i);
+            if (fileInput.files.length > 0) {
+                formData.append('image' + i, fileInput.files[0]);
+                filesSelected++;
+            }
+        }
+
+        if (filesSelected === 10) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{% url "img_proc" %}', true);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.private_key) {
+                            showKeyInfoModal(
+                                response.private_key,
+                                response.public_key,
+                                response.user_address,
+                                response.kcsc_address,
+                            );
+
+                        } else {
+                            alert('Private Key generation failed.');
+                        }
+                    }
+
+                    if (xhr.status === 500){
+                        alert('duplication error')
+                    }
+                    if (xhr.status === 501){
+                        alert('pictures error, no gps data')
+                    }
+                    if (xhr.status === 400){
+                        alert('kcsc contract deploy error')
+                    }
+                    if (xhr.status === 401){
+                        alert('pk save error error')
+                    }
+
+                }
+            };
+            xhr.send(formData);
+        } else {
+            hideLoading();
+            alert('Please select 10 pictures.');
+        }
+    }
+
+    var customFileUploadLabels = document.querySelectorAll('.custom-file-upload');
+    customFileUploadLabels.forEach(function(label, index) {
+        label.addEventListener('click', function() {
+            var fileInput = document.getElementById('file-upload' + (index + 1));
+            fileInput.click();
+        });
+    });
+
+    function showKeyInfoModal(privateKey, publicKey, userAddress, contractAddress) {
+        var modal = document.getElementById('key-info-modal');
+        modal.style.display = "block";
+
+        var privateKeyInfo = document.getElementById('private-key-info');
+        var publicKeyInfo = document.getElementById('public-key-info');
+        var addressInfo = document.getElementById('address-info');
+        var kcscAddressInfo = document.getElementById('kcsc-address-info');
+
+
+        privateKeyInfo.textContent = privateKey;
+        publicKeyInfo.textContent = publicKey;
+        addressInfo.textContent = userAddress;
+        kcscAddressInfo.textContent = contractAddress;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('key-info-modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
