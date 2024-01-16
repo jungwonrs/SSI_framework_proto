@@ -2,11 +2,10 @@ import json
 from web3 import Web3
 from solcx import compile_source
 from eth_account import Account
+from eth_account.messages import encode_defunct
 
 from . import cmsc_control as cc
 from . import vc_gen as vcg
-
-
 
 def blockchain_connect(sc_ad):
     w3 = Web3(Web3.HTTPProvider('http://163.239.201.32:8545'))
@@ -269,3 +268,129 @@ def vc_revoke(req):
         return False
 
 
+def change_vc_key_owner(req):
+    json_req_data = json.loads(req.body.decode('utf-8'))
+
+    vccsc_ad = json_req_data.get('vccsc_ad')
+    original_key = json_req_data.get('orignal_key_owner')
+    new_key = json_req_data.get('new_key_owner')
+
+    private_key = json_req_data.get('private_key')
+    account = Account.from_key(private_key)
+    wallet_ad = account.address
+
+    w3, contract = blockchain_connect(vccsc_ad)
+
+    vccsc_data = contract.functions.setKeyOwner(new_key, original_key).build_transaction({
+        'from': wallet_ad,
+        'gas': 3000000,
+        'gasPrice': 0,
+        'nonce': w3.eth.get_transaction_count(wallet_ad)
+    })
+
+    vccsc_data_signed_transaction = w3.eth.account.sign_transaction(vccsc_data, private_key=private_key)
+    vccsc_data_tx_hash = w3.eth.send_raw_transaction(vccsc_data_signed_transaction.rawTransaction)
+    receipt = w3.eth.wait_for_transaction_receipt(vccsc_data_tx_hash)
+
+
+    if receipt.status == 1:
+        return True
+    else:
+        return False
+
+def add_vc(req):
+    json_req_data = json.loads(req.body.decode('utf-8'))
+
+    vccsc_ad = json_req_data.get('vccsc_ad')
+    vccsc_key = json_req_data.get('vccsc_key')
+    cmsc_ad = json_req_data.get('cmsc_ad')
+    cmsc_key = json_req_data.get('cmsc_key')
+    vc_data = json_req_data.get('vc_data')
+
+    private_key = json_req_data.get('private_key')
+    account = Account.from_key(private_key)
+    wallet_ad = account.address
+
+    _, cmsc = cc.blockchain_connect(cmsc_ad)
+    w3, contract = blockchain_connect(vccsc_ad)
+
+    data_vc = cmsc.functions.readValuesbyOwner(cmsc_key).call({
+        'from': wallet_ad
+    })
+
+    hRoot = data_vc[0]
+    nKey = [item.strip(" '") for item in data_vc[1].strip("[]").split(',')]
+    salt = [item.strip(" '") for item in data_vc[2].strip("[]").split(',')]
+
+    claim = vcg.gen_claim(vc_data, hRoot, nKey, salt)
+    meta = vcg.metadata_gen(10)
+
+    meta_claim = claim + meta
+    message_hash = Web3.keccak(text=meta_claim).hex()
+    message_hash_bytes = bytes.fromhex(message_hash[2:])
+    signable_message = encode_defunct(message_hash_bytes)
+    pr = w3.eth.account.sign_message(signable_message, private_key=private_key)
+
+    multi_cl = [claim]
+
+    vccsc_data = contract.functions.storeVc(str(meta), multi_cl, str(pr), vccsc_key).build_transaction({
+        'from': wallet_ad,
+        'gas': 3000000,
+        'gasPrice': 0,
+        'nonce': w3.eth.get_transaction_count(wallet_ad)
+    })
+
+    vccsc_data_signed_transaction = w3.eth.account.sign_transaction(vccsc_data, private_key=private_key)
+    vccsc_data_tx_hash = w3.eth.send_raw_transaction(vccsc_data_signed_transaction.rawTransaction)
+    receipt = w3.eth.wait_for_transaction_receipt(vccsc_data_tx_hash)
+
+    if receipt.status == 1:
+        return meta
+    else:
+        return False
+
+def add_new_claim(req):
+    json_req_data = json.loads(req.body.decode('utf-8'))
+
+    vccsc_ad = json_req_data.get('vccsc_ad')
+    vccsc_key = json_req_data.get('vccsc_key')
+
+    cmsc_ad = json_req_data.get('cmsc_ad')
+    cmsc_key = json_req_data.get('cmsc_key')
+
+    vc_meta = json_req_data.get('vc_meta')
+    vc_data = json_req_data.get('vc_data')
+
+    private_key = json_req_data.get('private_key')
+    account = Account.from_key(private_key)
+    wallet_ad = account.address
+
+    _, cmsc = cc.blockchain_connect(cmsc_ad)
+
+    data_vc = cmsc.functions.readValuesbyOwner(cmsc_key).call({
+        'from': wallet_ad
+    })
+
+    hRoot = data_vc[0]
+    nKey = [item.strip(" '") for item in data_vc[1].strip("[]").split(',')]
+    salt = [item.strip(" '") for item in data_vc[2].strip("[]").split(',')]
+
+    claim = vcg.gen_claim(vc_data, hRoot, nKey, salt)
+
+    w3, contract = blockchain_connect(vccsc_ad)
+
+    vccsc_data = contract.functions.addCl(vc_meta, claim, vccsc_key).build_transaction({
+        'from': wallet_ad,
+        'gas': 3000000,
+        'gasPrice': 0,
+        'nonce': w3.eth.get_transaction_count(wallet_ad)
+    })
+
+    vccsc_data_signed_transaction = w3.eth.account.sign_transaction(vccsc_data, private_key=private_key)
+    vccsc_data_tx_hash = w3.eth.send_raw_transaction(vccsc_data_signed_transaction.rawTransaction)
+    receipt = w3.eth.wait_for_transaction_receipt(vccsc_data_tx_hash)
+
+    if receipt.status == 1:
+        return True
+    else:
+        return False

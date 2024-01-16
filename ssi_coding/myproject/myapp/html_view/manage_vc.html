@@ -132,6 +132,37 @@
             grid-template-columns: 1fr 1fr; /* On smaller screens, use two columns */
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+
     </style>
 </head>
 <body>
@@ -585,6 +616,14 @@
             <label for="VCCSC_key_owner_vccsc12">VCCSC Key Owner:</label>
             <input type="text" id="VCCSC_key_owner_vccsc12" name="VCCSC_key_owner_vccsc12">
         </div>
+        <div class="input-container">
+            <label for="cmscAddress12">CMSC Address:</label>
+            <input type="text" id="cmscAddress12" name="cmscAddress11">
+        </div>
+        <div class="input-container">
+            <label for="CMSC_key_owner_vccsc12">CMSC Key Owner:</label>
+            <input type="text" id="CMSC_key_owner_vccsc12" name="CMSC_key_owner_vccsc11">
+        </div>
         <div class = "input-container">
             <label for ="private_key12"> Private key: </label>
             <input type="text" id="private_key12" name="private_key12">
@@ -600,6 +639,12 @@
             <button type="button" class="action-button" onclick="addNewClaim()">Add new Claim</button>
         </div>
 
+        <div id="key-info-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p><strong>VC Meta:</strong> <span id="new_vc_meta"></span></p>
+            </div>
+        </div>
 
     </div>
     <script>
@@ -1032,6 +1077,122 @@
             xhr.send(JSON.stringify(jsonData));
         }
 
+        function setKeyOwner(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_ad = document.getElementById("vccscAddress10").value;
+            var private_key = document.getElementById('Private10').value;
+            var orignal_key_owner = document.getElementById("orignal_key_owner").value;
+            var new_key_owner = document.getElementById("new_key_owner2").value;
+
+            var jsonData = {
+                "vccsc_ad": vccsc_ad,
+                "private_key": private_key,
+                "orignal_key_owner": orignal_key_owner,
+                "new_key_owner" : new_key_owner,
+            };
+
+            xhr.open('POST', '{% url "change_vc_key_owner" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function addNewVC(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_ad = document.getElementById("vccscAddress11").value;
+            var vccsc_key = document.getElementById('VCCSC_key_owner_vccsc11').value;
+            var cmsc_ad = document.getElementById("cmscAddress11").value;
+            var cmsc_key = document.getElementById("CMSC_key_owner_vccsc11").value;
+
+            var private_key = document.getElementById("private_key11").value;
+            var vc_data = document.getElementById("vccscData11").value;
+
+
+            var jsonData = {
+                "vccsc_ad": vccsc_ad,
+                "vccsc_key": vccsc_key,
+                "cmsc_ad": cmsc_ad,
+                "cmsc_key" : cmsc_key,
+                "private_key": private_key,
+                "vc_data": vc_data,
+            };
+
+            xhr.open('POST', '{% url "add_vc" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        showKeyInfoModal(response.result_meta);
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function addNewClaim(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var vccsc_ad = document.getElementById("vccscAddress12").value;
+            var vccsc_key = document.getElementById('VCCSC_key_owner_vccsc12').value;
+            var cmsc_ad = document.getElementById('cmscAddress12').value;
+            var cmsc_key = document.getElementById('CMSC_key_owner_vccsc12').value;
+
+            var private_key = document.getElementById("private_key12").value;
+            var vc_meta = document.getElementById("vc_meta12").value;
+            var vc_data = document.getElementById("vccscData12").value;
+
+            var jsonData = {
+                "vccsc_ad": vccsc_ad,
+                "vccsc_key": vccsc_key,
+                "cmsc_ad": cmsc_ad,
+                "cmsc_key":cmsc_key,
+                "private_key": private_key,
+                "vc_meta" : vc_meta,
+                "vc_data": vc_data,
+            };
+
+            xhr.open('POST', '{% url "add_new_claim" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        alert("okay!: " + xhr.responseText)
+                    } else {
+                        alert("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
         function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -1045,6 +1206,20 @@
                 }
             }
             return cookieValue;
+        }
+
+        function showKeyInfoModal(vc_metaInfo) {
+            var modal = document.getElementById('key-info-modal');
+            modal.style.display = "block";
+
+            var vcMetaInfo = document.getElementById('new_vc_meta')
+
+            vcMetaInfo.textContent = vc_metaInfo
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('key-info-modal');
+            modal.style.display = 'none';
         }
 
     </script>

@@ -37,7 +37,7 @@ def input_process(req):
         meta_claim = claim + meta
         message_hash = Web3.keccak(text=meta_claim).hex()
 
-        message_hash_bytes = bytes.fromhex(message_hash[2:])  # Skip the '0x' part
+        message_hash_bytes = bytes.fromhex(message_hash[2:])
         signable_message = encode_defunct(message_hash_bytes)
         pr = w3.eth.account.sign_message(signable_message, private_key=sk)
 
@@ -247,51 +247,53 @@ def deploy_cmsc(w3, ad, sk, hRoot, nKey, salt, key_owner, access_cmsc):
         contract_source_code = """
         // SPDX-License-Identifier: MIT
         pragma solidity ^0.8.0;
-
+        
         contract cmsc {
             address private owner;
             address private accessor;
-
+        
             string private keyOwner;
             string private access_cmsc;
-
+        
             string private hRoot;
             string private nKey;
             string private salt;
             mapping(bytes32 => bool) private usedAccessHashes;
-
+        
+            event return_3f(string hRoot, string Nkey, string salt);
+        
             constructor(string memory _keyOwner) {
                 owner = msg.sender;
                 keyOwner = _keyOwner;
             }
-
+        
             modifier onlyOwner() {
                 require(msg.sender == owner, "Only the owner can perform this action");
                 _;
             }
-
+        
             modifier onlyAccessor() {
                 require(msg.sender == accessor, "Not authorized");
                 _;
             }
-
+        
             function storeValues(string memory _hRoot, string memory _nKey, string memory _salt, string memory _keyOwner) public onlyOwner {
                 require(keccak256(bytes(keyOwner)) == keccak256(bytes(_keyOwner)), "Key owner verification failed");
                 hRoot = _hRoot;
                 nKey = _nKey;
                 salt = _salt;
             }
-
+        
             function setAccessor(address _accessor, string memory _keyOwner) public onlyOwner {
                 require(keccak256(bytes(keyOwner)) == keccak256(bytes(_keyOwner)), "Key owner verification failed");
                 accessor = _accessor;
             }
-
+        
             function setKeyOwner(string memory _newKeyOwner, string memory _keyOwner) public onlyOwner {
                 require(keccak256(bytes(keyOwner)) == keccak256(bytes(_keyOwner)), "Key owner verification failed");
                 keyOwner = _newKeyOwner;
             }
-
+        
             function setAccessCMS(string memory _newAccessCMS, string memory _keyOwner) public onlyOwner {
                 require(keccak256(bytes(keyOwner)) == keccak256(bytes(_keyOwner)), "Key owner verification failed");
                 bytes32 access_cmsc_hash = keccak256(abi.encodePacked(_newAccessCMS));
@@ -302,19 +304,21 @@ def deploy_cmsc(w3, ad, sk, hRoot, nKey, salt, key_owner, access_cmsc):
                     revert("Accessor is already in use");
                 }
             }
-
-            function readValues(string memory _access_cmsc) public onlyAccessor returns (string memory, string memory, string memory) {
+        
+            function readValues(string memory _access_cmsc) public onlyAccessor {
                 require(keccak256(bytes(access_cmsc)) == keccak256(bytes(_access_cmsc)), "Access_cmsc verification failed");
                 access_cmsc = keyOwner;
-                return (hRoot, nKey, salt);
+                
+                emit return_3f(hRoot, nKey, salt);
             }
-
-
+        
+        
             function readValuesbyOwner(string memory _keyOwner) public view onlyOwner returns (string memory, string memory, string memory) {
                 require(keccak256(bytes(keyOwner)) == keccak256(bytes(_keyOwner)), "Key owner verification failed");
                 return (hRoot, nKey, salt);
             }
         }
+
         """
 
         compiled_sol = compile_source(contract_source_code, solc_version=solc_version)

@@ -1,10 +1,8 @@
 from django.urls import path
-from . import views, api
+from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('api/hello/', api.api_hello, name='api_hello'),
-
     path('select/', views.select_page, name='select_page'),
 
     path('select/user', views.service_user, name='service_user'),
@@ -30,11 +28,12 @@ urlpatterns = [
     path('select/user/manvc/modifyClaimInfo', views.modify_claim_info, name="modify_claim_info"),
     path('select/user/manvc/getVcRevocationList', views.get_vc_revocation_list, name="get_vc_revocation_list"),
     path('select/user/manvc/vcRevoke', views.vc_revoke, name="vc_revoke"),
-    #path('select/user/manvc/changeVccscKeyOwner', views.change_vc_key_owner, name='change_vc_key_owner'),
-    #path('select/user/manvc/addNewClaim', views.add_new_claim, name='add_new_claim),
-    #path('select/user/manvc/addVC', views.add_vc, name='add_new_vc')
+    path('select/user/manvc/changeVccscKeyOwner', views.change_vc_key_owner, name='change_vc_key_owner'),
+    path('select/user/manvc/addNewVC', views.add_vc, name='add_vc'),
+    path('select/user/manvc/addNewClaim', views.add_new_claim, name='add_new_claim'),
 
     path('select/sp', views.service_provider, name='service_provider'),
+    path('select/sp/verify', views.user_verify, name='service_verify')
 
 ]
 

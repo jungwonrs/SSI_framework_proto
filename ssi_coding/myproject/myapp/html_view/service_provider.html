@@ -5,32 +5,276 @@
     <title>Service Provider</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #e8eaf6;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
         }
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
+            width: 80%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 25px;
             background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: auto;
         }
-        h1 {
+
+        h1, h2 {
             color: #333;
+            font-size: 2rem;
+            margin-bottom: 20px;
         }
-        p {
-            color: #666;
+
+        .input-container {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+
+        input, textarea {
+            resize: vertical;
+            box-sizing: border-box; /* Add this line if it's not already present */
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .action-button {
+            padding: 10px 30px;
+            background-color: #3498db;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase; /* Button text style */
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #2980b9;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Ensure a min-width for the columns */
+            gap: 15px; /* This adds space between the grid items */
+            padding: 10px; /* Optional: to add some space inside the grid container */
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 5px;
+            padding-left: 5px; /* Align the text a bit to the left */
+        }
+        input[type="text"] {
+            width: 100%; /* Ensures the input doesn't exceed the parent width */
+            box-sizing: border-box; /* Include padding and border in the width */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .log-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+            height: 200px; /* Fixed height for the log container */
+            overflow-y: scroll; /* Make it scrollable */
+            background-color: #f9f9f9; /* Light background for the logs */
+            font-family: monospace; /* Makes it easier to read logs */
+        }
+
+
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr 1fr; /* Corrected the rule to be within .grid-container */
+    }
+        .container {
+        width: 95%; /* Slightly more padding on small screens */
+        margin: 20px auto; /* Maintain the vertical margin but center horizontally */
+    }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Service Provider page</h1>
-        <p>It will be update</p>
+        <h1>Service Provider Page</h1>
+        {% csrf_token %}
+        <div class="input-container">
+            <label for="cmsc_ad">1. CMSC Address:</label>
+            <input type="text" id="cmsc_ad" name="cmsc_ad">
+        </div>
+        <div class="input-container">
+            <label for="access_cmsc">2. Access_CMSC:</label>
+            <input type="text" id="access_cmsc" name="access_cmsc">
+        </div>
+        <div class="input-container">
+            <label for="vccsc_ad">3. VCCSC Address:</label>
+            <input type="text" id="vccsc_ad" name="vccsc_ad">
+        </div>
+        <div class="input-container">
+            <label for="vc_meta">4. VC_meta:</label>
+            <input type="text" id="vc_meta" name="vc_meta">
+        </div>
+        <div class="input-container">
+            <label for="u_ad">5. User Address:</label>
+            <input type="text" id="u_ad" name="u_ad">
+        </div>
+        <div class="input-container">
+            <label for="sp_sk">6. Service Provider Private Key:</label>
+            <input type="text" id="sp_sk" name="sp_sk">
+        </div>
+
+        <div class="button-container">
+            <button type="button" class="action-button" onclick="verifyUser()">Submit</button>
+        </div>
+
+        <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255, 255, 255, 0.8); z-index: 9999; text-align: center;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <p>Loading...</p>
+                </div>
+        </div>
+
+        <div class="log-container" id="log">
+
+        </div>
 
     </div>
+
+    <script>
+        function verifyUser(){
+            var xhr = new XMLHttpRequest();
+            var csrftoken = getCookie('csrftoken');
+
+            var cmsc_ad = document.getElementById("cmsc_ad").value;
+            var access_cmsc = document.getElementById('access_cmsc').value;
+            var vccsc_ad = document.getElementById('vccsc_ad').value;
+            var vc_meta = document.getElementById('vc_meta').value;
+            var u_ad = document.getElementById("u_ad").value;
+            var sp_sk = document.getElementById("sp_sk").value;
+
+            var jsonData = {
+                "cmsc_ad": cmsc_ad,
+                "access_cmsc": access_cmsc,
+                "vccsc_ad": vccsc_ad,
+                "vc_meta":vc_meta,
+                "u_ad": u_ad,
+                "sp_sk" : sp_sk,
+            }
+
+            xhr.open('POST', '{% url "service_verify" %}', true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.setRequestHeader('X-CSRFToken', csrftoken);
+
+            updateLog("User verification initiated....")
+
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    console.log("Response Text: ", xhr.responseText); // For debugging
+                    hideLoading();
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        console.log("Parsed Response: ", response); // For debugging
+                        updateLog(response.result_meta);
+                    } else {
+                        updateLog("Error: " + xhr.responseText);
+                    }
+                }
+            };
+            showLoading();
+            xhr.send(JSON.stringify(jsonData));
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+         function updateLog(message){
+            var logDiv = document.getElementById('log');
+            logDiv.innerHTML += message + "<br>"; // Add new log message with a line break
+            logDiv.scrollTop = logDiv.scrollHeight; // Auto-scroll to the latest log entry
+        }
+
+        function showLoading(){
+            var loadingOverlay = document.getElementById("loading-overlay");
+            loadingOverlay.style.display = 'block';
+        }
+
+        function hideLoading(){
+            var loadingOverlay = document.getElementById('loading-overlay');
+            loadingOverlay.style.display = 'none';
+        }
+
+
+    </script>
 </body>
 </html>

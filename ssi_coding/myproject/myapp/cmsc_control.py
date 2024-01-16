@@ -23,6 +23,8 @@ def blockchain_connect(sc_ad):
         string private salt;
         mapping(bytes32 => bool) private usedAccessHashes;
     
+        event return_3f(string hRoot, string Nkey, string salt);
+    
         constructor(string memory _keyOwner) {
             owner = msg.sender;
             keyOwner = _keyOwner;
@@ -66,10 +68,11 @@ def blockchain_connect(sc_ad):
             }
         }
     
-        function readValues(string memory _access_cmsc) public onlyAccessor returns (string memory, string memory, string memory) {
+        function readValues(string memory _access_cmsc) public onlyAccessor {
             require(keccak256(bytes(access_cmsc)) == keccak256(bytes(_access_cmsc)), "Access_cmsc verification failed");
             access_cmsc = keyOwner;
-            return (hRoot, nKey, salt);
+            
+            emit return_3f(hRoot, nKey, salt);
         }
     
     
@@ -78,6 +81,7 @@ def blockchain_connect(sc_ad):
             return (hRoot, nKey, salt);
         }
     }
+
     """
     compiled_sol = compile_source(contract_source_code, solc_version=solc_version)
     contract_interface = compiled_sol['<stdin>:cmsc']
